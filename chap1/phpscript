@@ -1,0 +1,4 @@
+#!/usr/bin/php
+<?php
+print "This is from PHP";
+?>

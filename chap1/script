@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /home/mzijlstra
+pwd
+mkdir things
+cd things
+touch child
+cd ~
+
