@@ -17,10 +17,23 @@ char *simple_strtok(char *str, const char *delim) {
     return start;
 }
 
+static int isin(const char *s, int c) {
+    for (int i=0; s[i] != '\0'; i++) {
+        if (c == s[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 char *strtok(char *str, const char *delim) {
     static char* s;
     if (str != NULL) {
         s = str;
+        // make sure to skip preceding delims
+        while (isin(delim, *s)) {
+            s++;
+        }
     } else if (*s == '\0') {
         // if we're at the end of s
         return NULL;
@@ -29,36 +42,24 @@ char *strtok(char *str, const char *delim) {
     char *ret = s;
     int i;
     for (i = 0; s[i] != '\0'; i++) {
-        // check if this char is any of the delims
-        for (int j = 0; delim[j] != '\0'; j++) {
-            if (s[i] == delim[i]) {
-                goto found;
-            }
-        }
-    }
-    goto end;
-found:
-    // remove all consecutive delims
-    for (; s[i] != '\0'; i++) {
-        int j;
-        for (j = 0; delim[j] != '\0'; j++) {
-            // break if we find delim
-            if (s[i] == delim[j]) {
-                break;
-            }
-        }
-        // if s[i] is not a delim
-        if (delim[j] == '\0') {
-            i--; // make sure i points to last delim
+        if (isin(delim, s[i])) {
             break;
         }
     }
-    // if we're at a delim, and not the end
+    // if we found a delim
     if (s[i] != '\0') {
-        s[i] = '\0';
-        i++; // go to after delim
-    } 
-end:
+        // move through consecutive delims
+        do {
+            i++;
+            s[i-1] = '\0';
+        } while (isin(delim, s[i]) && s[i] != '\0');
+    }
+
+    // make sure ret wasn't inside a delim
+    while (*ret == '\0') {
+        ret++;
+    }
+
     s = &s[i];
     return ret;
 }
@@ -66,20 +67,30 @@ end:
 
 int main() {
     // strings declared with quotes are constant, chars cannot be changed
-    char *text = "This is some text";
-    char other[18];
-    for (int i = 0; i< 18; i++) {
-        other[i] = text[i];
+    char *text = "  This \t is some text \n\f with \r tests  ";
+    char buf[50];
+    for (int i = 0; text[i] != '\0'; i++) {
+        buf[i] = text[i];
+    }
+    puts("---simple strtok---");
+    char *s = simple_strtok(buf, " ");
+    if (s != NULL) {
+        puts(s);
+        while ( (s = simple_strtok(NULL, " ")) != NULL) {
+            puts(s);
+        }
     }
     
-    puts(simple_strtok(other, " "));
-    puts(simple_strtok(NULL, " "));
-    puts(simple_strtok(NULL, " "));
-    puts(simple_strtok(NULL, " "));
-    puts(simple_strtok(NULL, " ")); // prints '\0'
-    puts(strtok(other, " "));
-    puts(strtok(NULL, " "));
-    puts(strtok(NULL, " "));
-    puts(strtok(NULL, " "));
-    puts(strtok(NULL, " ")); // prints '\0'
+    // clean up buf
+    puts("---full strtok---");
+    for (int i = 0; text[i] != '\0'; i++) {
+        buf[i] = text[i];
+    }
+    s = strtok(buf, " \r\n\f\t");
+    if (s != NULL) {
+        puts(s);
+        while ( (s = strtok(NULL, " \r\n\f\t")) != NULL) {
+            puts(s);
+        }
+    }
 }
