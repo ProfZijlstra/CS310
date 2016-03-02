@@ -13,7 +13,8 @@ static int rtc(const int* row, const int* col, int s, int t) {
 }
 
 int *matmul(const int* x, const int* y, int r, int s, int t){
-    int *z = (int*) malloc(r * t * sizeof(int));
+    int *matrix = (int*) malloc(r * t * sizeof(int));
+    int *z = matrix;
     for (int i=0; i < r; i++) {
         x += i*s;
         for (int j=0; j < t; j++) {
@@ -21,7 +22,7 @@ int *matmul(const int* x, const int* y, int r, int s, int t){
             z++;
         }
     }
-    return z;
+    return matrix;
 }
 
 int main() {
