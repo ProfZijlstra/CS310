@@ -25,7 +25,7 @@ void ArrayList_add(ArrayList* a, void* item) {
         // create a new array with double the space
         void** morespace = malloc(a->size * 2 * sizeof(void*));
         // copy all the stuff into the first half
-        memcpy(morespace, a->array, a->size);
+        memcpy(morespace, a->array, a->size * sizeof(void*));
         // free the old array
         free(a->array);
         // replace it with the new one
@@ -49,6 +49,7 @@ int ArrayList_remove(ArrayList* a) {
         return -1;
     } 
     a->head--; 
+    return 0;
 }
 
 int ArrayList_remove_idx(ArrayList* a, int idx) {
@@ -61,6 +62,7 @@ int ArrayList_remove_idx(ArrayList* a, int idx) {
         a->array[i] = a->array[i+1];
     }
     a->head--;
+    return 0;
 }
 
 int* Integer_construct(int n) {
