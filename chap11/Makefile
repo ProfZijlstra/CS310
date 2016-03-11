@@ -1,4 +1,3 @@
-
 all: hello.o
 	gcc hello.o -o hello 
 
