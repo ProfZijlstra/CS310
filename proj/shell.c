@@ -22,14 +22,14 @@ void tokenize(char* cmd, char* argv[]) {
 // fork and then exec the tokenized command 
 // don't wait for it to finish (run in the background)
 // prompt therefore usually re-appears first, then child output
-int background(char* argv[]) {
+int run(char* argv[]) {
     int id = fork();
     if (id == 0) {
         execv(argv[0], argv);
         _exit(1); // if we get here execv failed
     } else if (id < 0) {
         fprintf(stderr, "fork failed\n");
-        perror("background");
+        perror("no child ");
     }
     return id;
 }
@@ -49,7 +49,7 @@ int main() {
             exit(0); 
         }
         tokenize(cmd, argv);
-        background(argv);
+        run(argv);
     }
 }
 
