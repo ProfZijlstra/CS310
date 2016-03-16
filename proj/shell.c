@@ -3,18 +3,19 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAXLINE 80
-#define MAXARG 20
+#define MAXCHARS 80
+#define MAXTOK 20
 #define WHITE " \n\t"
 
 // turn the given command into tokens
 void tokenize(char* cmd, char* argv[]) {
-    int i = 0;
     char* tok = strtok(cmd, WHITE);
-    argv[i++] = tok;
-    while (i < MAXARG && tok != NULL) {
+    argv[0] = tok;
+    int i;
+    for (i = 1; i < MAXTOK && tok != NULL; i++) {
         // last tok will be NULL
-        argv[i++] = tok = strtok(NULL, WHITE); 
+        tok = strtok(NULL, WHITE); 
+        argv[i] = tok;
     } 
 }
 
@@ -35,13 +36,14 @@ int background(char* argv[]) {
 
 // main loop of the shell
 int main() {
-    char cmd[MAXLINE+1];
-    char* argv[MAXARG+1];
+    char cmd[MAXCHARS];
+    char* argv[MAXTOK+1];
     char* got;
 
     while (1) {
         printf("mysh ready$ ");
-        got = fgets(cmd, MAXLINE, stdin);
+        // reads MAXCHARS -1 chars and adds '\0'
+        got = fgets(cmd, MAXCHARS, stdin);
         if (got == NULL) { // user pressed ^D
             printf("\n");
             exit(0); 
